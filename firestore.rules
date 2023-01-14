@@ -1,0 +1,91 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    match /users/{userId} {
+      allow read, write: if 
+        request.auth.uid == userId;
+    }
+    
+    match /templates/{templateId} {
+      allow get;
+
+      allow list: if
+        resource.data.isPublished == true;
+
+      allow write: if false;
+    }
+
+    match /boards/{boardId} {
+      function isValidBoard() {
+        return
+          request.resource.data.to is string &&
+          request.resource.data.from is string &&
+          request.resource.data.title is string &&
+          request.resource.data.author is string &&
+          request.resource.data.template is string &&
+          request.resource.data.imageURL is string &&
+          request.resource.data.isPublished is bool;
+      }
+
+      allow get;
+
+      allow list: if
+        request.auth.uid == resource.data.author;
+      
+      allow create: if
+        request.resource.data.author == request.auth.uid &&
+        isValidBoard() &&
+        request.resource.data.isPublished == false;
+
+      allow update: if
+        resource.data.author == request.auth.uid &&
+        resource.data.author == request.resource.data.author &&
+        isValidBoard() &&
+        request.resource.data.title.size() > 0;
+      
+      allow delete: if
+        resource.data.author == request.auth.uid;
+      
+      match /private_data/{dataId} {
+        allow get;
+
+        allow list: if false;
+
+        allow create: if false;
+
+        allow update: if isValidBoard();
+
+        allow delete: if false;
+      }
+      
+      match /posts/{postId} {
+        function isValidPost() {
+          return
+            request.resource.data.from is string &&
+            request.resource.data.message is string &&
+            request.resource.data.imageURL is string &&
+            request.resource.data.avatarURL is string;
+        }
+        
+        allow get;
+
+        allow list: if false;
+        
+        allow create: if
+          isValidPost() &&
+          request.resource.data.from.size() > 0 &&
+          request.resource.data.message.size() > 0 &&
+          request.resource.data.imageURL == '' &&
+          request.resource.data.avatarURL == '';
+        
+        allow update: if
+          isValidPost() &&
+          request.resource.data.from.size() > 0 &&
+          request.resource.data.message.size() > 0;
+        
+        allow delete: if false;
+      }
+    }
+  }
+}

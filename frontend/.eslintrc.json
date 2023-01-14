@@ -1,0 +1,26 @@
+{
+  "root": true,
+  "env": {
+    "browser": true,
+    "es6": true,
+    "jest": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "ignorePatterns": [
+    "/build/**/*" // Ignore built files.
+  ],
+  "plugins": ["react", "@typescript-eslint", "import"],
+  "rules": {
+    "quotes": ["error", "double"]
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "moduleDirectory": ["node_modules", "."]
+      }
+    }
+  }
+}

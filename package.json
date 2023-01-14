@@ -1,0 +1,44 @@
+{
+  "name": "yoseal",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "functions"
+  ],
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.26.0",
+    "@typescript-eslint/parser": "^4.26.0",
+    "eslint": "^7.28.0",
+    "eslint-config-airbnb-typescript": "^12.3.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-react": "^7.24.0",
+    "husky": "^6.0.0",
+    "lint-staged": "^11.0.0",
+    "prettier": "^2.3.1",
+    "typescript": "^4.2.4"
+  },
+  "scripts": {
+    "lint": "eslint --ext .js,.ts,.tsx,.jsx .",
+    "start:frontend": "yarn --cwd ./frontend start",
+    "start:functions": "firebase emulators:start --only functions",
+    "build": "yarn build:frontend",
+    "build:frontend": "yarn --cwd ./frontend build",
+    "build:functions": "yarn --cwd ./functions build",
+    "deploy:all": "firebase deploy",
+    "deploy:frontend": "firebase deploy --only hosting",
+    "deploy:functions": "firebase deploy --only functions",
+    "deploy:firestore": "firebase deploy --only firestore",
+    "deploy:firestore:rules": "firebase deploy --only firestore:rules"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": "eslint"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  }
+}
